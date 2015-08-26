@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 '''
     Torrenter v2 plugin for XBMC/Kodi
     Copyright (C) 2012-2015 Vadim Skorba v1 - DiMartino v2
@@ -27,6 +27,7 @@ import xbmcgui
 import xbmcplugin
 import xbmcvfs
 from functions import *
+import util
 
 class Core:
     __plugin__ = sys.modules["__main__"].__plugin__
@@ -544,7 +545,7 @@ class Core:
                     if self.contenterObject[cat].has_category(category):
                         link = json.dumps({'category': category, 'subcategory': subcategory, 'provider': cat})
                         title = '< %s - %s >' % (cat.encode('utf-8'), subcategory)
-                        self.drawItem('[B]%s[/B]' % title if self.contenterObject.get(cat).isScrappable() else title,
+                        self.drawItemdrawItemdrawItem('[B]%s[/B]' % title if self.contenterObject.get(cat).isScrappable() else title,
                                       'openContent', link, isFolder=True)
         elif category and not provider and not subcategory:
             if isinstance(category_dict.get(category), dict):
@@ -1003,30 +1004,32 @@ class Core:
 
     def drawItem(self, title, action, link='', image='', isFolder=True, contextMenu=None, replaceMenu=True, action2='',
                  info={}):
-        listitem = xbmcgui.ListItem(title, iconImage=image, thumbnailImage=image)
-        if not info: info = {"Title": title, "plot": title}
-        if isinstance(link, dict):
-            link_url = ''
-            for key in link.keys():
-                if link.get(key):
-                    link_url = '%s&%s=%s' % (link_url, key, urllib.quote_plus(link.get(key)))
-            url = '%s?action=%s' % (sys.argv[0], action) + link_url
-        else:
-            url = '%s?action=%s&url=%s' % (sys.argv[0], action, urllib.quote_plus(link))
-        if action2:
-            url = url + '&url2=%s' % urllib.quote_plus(action2)
-        if not contextMenu:
-            contextMenu = [(self.localize('Search Control Window'),
-                            'xbmc.RunScript(%s,)' % os.path.join(ROOT, 'controlcenter.py'))]
-            replaceMenu = False
-        if contextMenu:
-            listitem.addContextMenuItems(contextMenu, replaceItems=replaceMenu)
-        if isFolder:
-            listitem.setProperty("Folder", "true")
-            listitem.setInfo(type='Video', infoLabels=info)
-        else:
-            listitem.setInfo(type='Video', infoLabels=info)
-        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=url, listitem=listitem, isFolder=isFolder)
+        if (util.isvalid(title) == True):
+            listitem = xbmcgui.ListItem(title, iconImage=image, thumbnailImage=image)
+            if not info: info = {"Title": title, "plot": title}
+            if isinstance(link, dict):
+                link_url = ''
+                for key in link.keys():
+                    if link.get(key):
+                        link_url = '%s&%s=%s' % (link_url, key, urllib.quote_plus(link.get(key)))
+                url = '%s?action=%s' % (sys.argv[0], action) + link_url
+            else:
+                url = '%s?action=%s&url=%s' % (sys.argv[0], action, urllib.quote_plus(link))
+            if action2:
+                url = url + '&url2=%s' % urllib.quote_plus(action2)
+            if not contextMenu:
+                contextMenu = [(self.localize('Search Control Window'),
+                                'xbmc.RunScript(%s,)' % os.path.join(ROOT, 'controlcenter.py'))]
+                replaceMenu = False
+            if contextMenu:
+                listitem.addContextMenuItems(contextMenu, replaceItems=replaceMenu)
+            if isFolder:
+                listitem.setProperty("Folder", "true")
+                listitem.setInfo(type='Video', infoLabels=info)
+            else:
+                listitem.setInfo(type='Video', infoLabels=info)
+                listitem.setProperty("Fanart_image", image) 
+            xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=url, listitem=listitem, isFolder=isFolder)
 
     def getParameters(self, parameterString):
         commands = {}
@@ -1430,16 +1433,18 @@ class Core:
 
                 for title, identifier in contentListNew:
                     contextMenu = [
-                        (self.localize('Download via T-client'),
+                        (self.localize('Download via T-client ohh'),
                          'XBMC.RunPlugin(%s)' % ('%s?action=%s&ind=%s') % (
                          sys.argv[0], 'downloadFilesList', str(identifier))),
                         (self.localize('Download via Libtorrent'),
                          'XBMC.RunPlugin(%s)' % ('%s?action=%s&ind=%s') % (
                          sys.argv[0], 'downloadLibtorrent', str(identifier))),
                     ]
-                    link = {'url': identifier, 'thumbnail': thumbnail, 'save_folder':save_folder}
-                    self.drawItem(title, 'playTorrent', link, image=thumbnail, isFolder=False,
-                                  action2=ids_video.rstrip(','), contextMenu=contextMenu, replaceMenu=False)
+                    info = util.getInfo(title)
+                    link = {'url': identifier, 'thumbnail': info[2], 'save_folder':save_folder}
+					
+                    self.drawItem(info[0], 'playTorrent', link, image=info[2], isFolder=False,
+                                  action2=ids_video.rstrip(','), contextMenu=contextMenu, replaceMenu=False, info={"Plot":info[1]})
                 view_style('openTorrent')
                 xbmcplugin.endOfDirectory(handle=int(sys.argv[1]), succeeded=True)
 
@@ -1472,7 +1477,7 @@ class Core:
         if self.__settings__.getSetting('sort_search')=='true':
             filesList = sorted(filesList, key=lambda x: x[0], reverse=True)
         self.showFilesList(filesList, params)
-
+	
     def controlCenter(self, params={}):
         xbmc.executebuiltin(
             'xbmc.RunScript(%s,)' % os.path.join(ROOT, 'controlcenter.py'))
