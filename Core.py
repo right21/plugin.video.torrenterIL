@@ -74,36 +74,36 @@ class Core:
             HistorycontextMenu.extend(contextMenu)
             HistorycontextMenu.append(
                 (self.localize('Clear %s') % self.localize('Search History'), ListString % ('History', 'clear', 'addtime', '')))
-            self.drawItem('< %s >' % self.localize('Search History'), 'History',
+            self.drawItem(self.localize('Search History'), 'History',
                           image=self.ROOT + '/icons/history2.png', contextMenu=HistorycontextMenu, replaceMenu=False)
-        self.drawItem('< %s >' % self.localize('Search'), 'search', image=self.ROOT + '/icons/search.png', )
+        self.drawItem(self.localize('Search'), 'search', image=self.ROOT + '/icons/search.png', )
         CLcontextMenu=[]
         CLcontextMenu.extend(contextMenu)
         CLcontextMenu.append((self.localize('Reset All Cache DBs'),
                             ListString % ('full_download', '', 'url', json.dumps({'action': 'delete'}))))
-        self.drawItem('< %s >' % self.localize('Content Lists'), 'openContent', image=self.ROOT + '/icons/media.png',
+        self.drawItem(self.localize('Content Lists'), 'openContent', image=self.ROOT + '/icons/media.png',
                       contextMenu=CLcontextMenu, replaceMenu=False)
         DLScontextMenu=[(self.localize('Start All'), ListString % ('DownloadStatus', 'startall', 'addtime', '')),
                         (self.localize('Stop All'), ListString % ('DownloadStatus', 'stopall', 'addtime', '')),]
         DLScontextMenu.append(
                 (self.localize('Clear %s') % self.localize('Download Status'), ListString % ('DownloadStatus', 'clear', 'addtime', '')))
         DLScontextMenu.extend(contextMenu)
-        self.drawItem('< %s >' % self.localize('Download Status'), 'DownloadStatus', image=self.ROOT + '/icons/download.png',
+        self.drawItem(self.localize('Download Status'), 'DownloadStatus', image=self.ROOT + '/icons/download.png',
                       contextMenu=DLScontextMenu, replaceMenu=False)
-        self.drawItem('< %s >' % self.localize('Torrent-client Browser'), 'uTorrentBrowser',
+        self.drawItem(self.localize('Torrent-client Browser'), 'uTorrentBrowser',
                       image=self.ROOT + '/icons/' + self.getTorrentClientIcon())
-        self.drawItem('< %s >' % self.localize('.torrent Player'), 'torrentPlayer',
+        self.drawItem(self.localize('.torrent Player'), 'torrentPlayer',
                       image=self.ROOT + '/icons/torrentPlayer.png')
-        self.drawItem('< %s >' % self.localize('Search Control Window'), 'controlCenter',
+        self.drawItem(self.localize('Search Control Window'), 'controlCenter',
                       image=self.ROOT + '/icons/settings.png', isFolder=False)
-        if self.torrent_player!='1':self.drawItem('< %s >' % self.localize('Magnet-link Player'), 'magentPlayer',
+        if self.torrent_player!='1':self.drawItem(self.localize('Magnet-link Player'), 'magentPlayer',
                       image=self.ROOT + '/icons/magnet.png')
         if self.debug:
             self.drawItem('full_download', 'full_download', image=self.ROOT + '/icons/magnet.png')
             self.drawItem('test', 'test', image=self.ROOT + '/icons/magnet.png', isFolder=False)
 
         if '0' != self.__settings__.getSetting("keep_files"):
-            self.drawItem('< %s >' % self.localize('Clear Storage'), 'clearStorage', isFolder=True,
+            self.drawItem(self.localize('Clear Storage'), 'clearStorage', isFolder=True,
                           image=self.ROOT + '/icons/clear.png')
         view_style('sectionMenu')
         xbmcplugin.endOfDirectory(handle=int(sys.argv[1]), succeeded=True)
@@ -545,7 +545,7 @@ class Core:
                     if self.contenterObject[cat].has_category(category):
                         link = json.dumps({'category': category, 'subcategory': subcategory, 'provider': cat})
                         title = '< %s - %s >' % (cat.encode('utf-8'), subcategory)
-                        self.drawItemdrawItemdrawItem('[B]%s[/B]' % title if self.contenterObject.get(cat).isScrappable() else title,
+                        self.drawItem('[B]%s[/B]' % title if self.contenterObject.get(cat).isScrappable() else title,
                                       'openContent', link, isFolder=True)
         elif category and not provider and not subcategory:
             if isinstance(category_dict.get(category), dict):
@@ -1444,7 +1444,7 @@ class Core:
                     link = {'url': identifier, 'thumbnail': info[2], 'save_folder':save_folder}
 					
                     self.drawItem(info[0], 'playTorrent', link, image=info[2], isFolder=False,
-                                  action2=ids_video.rstrip(','), contextMenu=contextMenu, replaceMenu=False, info={"Plot":info[1]})
+                                  action2=ids_video.rstrip(','), contextMenu=contextMenu, replaceMenu=False, info={"Plot":info[1], "Title":info[0]})
                 view_style('openTorrent')
                 xbmcplugin.endOfDirectory(handle=int(sys.argv[1]), succeeded=True)
 
