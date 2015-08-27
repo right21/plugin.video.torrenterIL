@@ -21,23 +21,33 @@ def is_number(s):
     return False
 
 def isThatSxxExx (string):
-	if (len(string) != 6):
-		return False
-	else:
-		if (string[0].isdigit() == True):
-			return False
-		elif (string[1].isdigit() == False):
-			return False
-		elif(string[2].isdigit() == False):
-			return False
-		elif (string[3].isdigit() == True):
-			return False
-		elif (string[4].isdigit() == False):
-			return False
-		elif (string[5].isdigit() == False):
-			return False
-		else:
-			return True
+    if (len(string) != 6) and (len(string) != 3):
+        return False
+    else:
+        if (len(string) == 6):
+            if (string[0].isdigit() == True):
+                return False
+            elif (string[1].isdigit() == False):
+                return False
+            elif(string[2].isdigit() == False):
+                return False
+            elif (string[3].isdigit() == True):
+                return False
+            elif (string[4].isdigit() == False):
+                return False
+            elif (string[5].isdigit() == False):
+                return False
+            else:
+                return True
+        elif (len(string) == 3):
+            if (string[0].isdigit() == False):
+                return False
+            elif (string[1].isdigit() == False):
+                return False
+            elif(string[2].isdigit() == False):
+                return False
+            else:
+                return True
 
 def extract(text, startText, endText):
     start=text.find(startText,0)
@@ -60,11 +70,19 @@ def extractAll(text, startText, endText):
     return result
 
 def getEpisodeandSeason (SxxExx):
-	string = list(SxxExx)
-	Season = int(string[1])*10 + int(string[2])
-	Episode = int(string[4])*10 + int(string[5])
-	SeasonEpisode = [Season, Episode]
-	return SeasonEpisode
+    string = list(SxxExx)
+    Season = int('0')
+    Episode = int('0')
+    SeasonEpisode = []
+    if (len(SxxExx) == 6):
+        Season = int(string[1])*10 + int(string[2])
+        Episode = int(string[4])*10 + int(string[5])
+    if (len(SxxExx) == 3):
+        Season = int(string[0])
+        Episode = int(string[1])*10 + int(string[2])
+
+    SeasonEpisode = [Season, Episode]
+    return SeasonEpisode
 
 def getRealNames (title):
 	change = True
