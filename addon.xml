@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.torrenter" name="TorrenterIL" version="1.0.0" provider-name="right21">
+<addon id="plugin.video.torrenter" name="TorrenterIL" version="3.0.0" provider-name="right21">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.libtorrent"/>
